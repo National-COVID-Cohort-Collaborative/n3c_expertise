@@ -17,6 +17,7 @@ WebContent/dashboard.jsp -text
 WebContent/dologin.jsp -text
 WebContent/dologout.jsp -text
 WebContent/fake_register.jsp -text
+WebContent/feeds/current_publications.jsp -text
 WebContent/footer.jsp -text
 WebContent/head.jsp -text
 WebContent/images/n3c_logo.png -text svneol=unset#image/png

@@ -80,7 +80,7 @@
 								</tr>
 								<lucene:searchIterator>
 									<tr>
-										<td><a href="<lucene:hit label="email" />"><lucene:hit
+										<td><a href="https://orcid.org/<lucene:hit label="orcid" />"><lucene:hit
 													label="orcid" /></a></td>
 										<td><lucene:hit label="first_name" /> <lucene:hit label="last_name" /></td>
 									<tr>
