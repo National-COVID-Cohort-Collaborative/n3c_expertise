@@ -76,6 +76,7 @@ $.getJSON("feeds/current_publications.jsp", function(data){
     	data: data,
        	paging: true,
     	pageLength: 5,
+    	order: [[2, 'desc']],
      	columns: [
         	{
         		data: 'title',
