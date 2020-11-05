@@ -87,11 +87,6 @@
 								</lucene:searchIterator>
 							</table>
 						</div>
-						<div id="results-scroll" style="text-align: right;">
-							<button id="backtop" title="Back to Top">
-								<i class="fas fa-chevron-up"></i>
-							</button>
-						</div>
 					</div>
 				</lucene:search>
 			</c:when>
