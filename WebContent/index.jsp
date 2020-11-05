@@ -27,7 +27,7 @@
 	<div class="container center-box shadow-border">
     	<h2 class="header-text"><img src="images/n3c_logo.png" class="n3c_logo_header" alt="N3C Logo">N3C Expertise Discovery</h2>
     	<div style="text-align:center;">
-			<p><a href="search.jsp">Search the pool of N3C users</a>.</p>
+			<h3><a href="search.jsp">Search the pool of N3C researchers</a>.</h3>
 			<br>
 			<br>
 			<br>
