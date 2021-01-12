@@ -26,6 +26,8 @@ WebContent/logout.jsp -text
 WebContent/mail_test.jsp -text
 WebContent/membership.jsp -text
 WebContent/mentions/index.jsp -text
+WebContent/mentions/scan.jsp -text
+WebContent/mentions/submit_suppress.jsp -text
 WebContent/metadata.jsp -text
 WebContent/navbar.jsp -text
 WebContent/profile.jsp -text
