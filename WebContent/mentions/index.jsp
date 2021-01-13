@@ -49,27 +49,27 @@ table.dataTable thead .sorting_asc {
 					order by  1 desc,2;
 				</sql:query>
 					<table class="table table-striped">
-						<tr><th>Upload&nbsp;Date</th><th>Preprint</th><th>N3C Mentions</th></tr>
+						<tr><th>Upload&nbsp;Date</th><th style="width:40%">Preprint</th><th style="width:60%">N3C Mentions</th></tr>
 						<c:forEach items="${dois.rows}" var="row" varStatus="rowCounter">
 							<tr>
 								<td>${row.pub_date}</td>
 								<td><a href="https://doi.org/${row.doi}"><span style="color:#376076">${row.title}</span></a></td>
 								<td>
 									<sql:query var="matches" dataSource="jdbc/N3CExpertiseTagLib">
-select doi,seqnum,sentnum,full_text
-from covid_biorxiv.sentence
-where full_text ~'[nN]3[cC]'
-  and doi = ?
-order by 1,2,3;
+										select doi,seqnum,sentnum,full_text
+										from covid_biorxiv.sentence
+										where full_text ~'[nN]3[cC]'
+										  and doi = ?
+										order by 1,2,3;
 										<sql:param>${row.doi}</sql:param>
 									</sql:query>
 									<sql:query var="cites" dataSource="jdbc/N3CExpertiseTagLib">
-select sentence.doi,full_text,refnum,reference
-from covid_biorxiv.sentence natural join covid_biorxiv.citation,covid_biorxiv.reference
-where sentence.doi=reference.doi
-  and citation.refnum=reference.seqnum
-  and sentence.doi = ?
-  and reference ~'[nN]3[cC]';
+										select sentence.doi,full_text,refnum,reference
+										from covid_biorxiv.sentence natural join covid_biorxiv.citation,covid_biorxiv.reference
+										where sentence.doi=reference.doi
+										  and citation.refnum=reference.seqnum
+										  and sentence.doi = ?
+										  and (reference ~'[nN]3[cC]' or reference~'Cohort Collaborative');
 										<sql:param>${row.doi}</sql:param>
 									</sql:query>
 									<p>Sentences</p>
@@ -82,11 +82,11 @@ where sentence.doi=reference.doi
 										</c:forEach>
 									</ul>
 									<sql:query var="matches" dataSource="jdbc/N3CExpertiseTagLib">
-select doi,seqnum,reference
-from covid_biorxiv.reference
-where reference ~'[nN]3[cC]'
-  and doi = ?
-order by 1,2;
+										select doi,seqnum,reference
+										from covid_biorxiv.reference
+										where reference ~'[nN]3[cC]'
+										  and doi = ?
+										order by 1,2;
 										<sql:param>${row.doi}</sql:param>
 									</sql:query>
 									<p>References</p>
