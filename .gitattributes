@@ -31,6 +31,9 @@ WebContent/mentions/submit_suppress.jsp -text
 WebContent/metadata.jsp -text
 WebContent/navbar.jsp -text
 WebContent/profile.jsp -text
+WebContent/publications/scan.jsp -text
+WebContent/publications/submit_link.jsp -text
+WebContent/publications/submit_suppress.jsp -text
 WebContent/register.jsp -text
 WebContent/resources/autocomplete.css -text
 WebContent/resources/autocomplete.js -text
