@@ -46,13 +46,13 @@ table.dataTable thead .sorting_asc {
 
 				<h3>LITCOVID Articles</h3>
 				<table class="table table-striped">
-					<tr><th>Link?</th><th>Suppress?</th><th>DOI</th><th>Title</th><th>Rank</th><th>Author</th></tr>
+					<tr><th>MS ID</th><th>Manuscript Title</th><th>Corresponding Author</th><th>PMID</th><th>LITCOVID Title</th></tr>
 					<c:forEach items="${names.rows}" var="row" varStatus="rowCounter">
 						<tr>
 							<td>${row.ms_id}</td>
 							<td>${row.tentative_manuscript_or_publication_title}</td>
 							<td>${row.corresponding_author_name}</td>
-							<td>${row.pmid}</td>
+							<td><a href="https://pubmed.ncbi.nlm.nih.gov/${row.pmid}">${row.pmid}</a></td>
 							<td>${row.article_title}</td>
 						</tr>
 					</c:forEach>
@@ -70,7 +70,7 @@ table.dataTable thead .sorting_asc {
 							<td>${row.ms_id}</td>
 							<td>${row.tentative_manuscript_or_publication_title}</td>
 							<td>${row.corresponding_author_name}</td>
-							<td>${row.doi}</td>
+							<td><a href="https://doi.org/${row.doi}">${row.doi}</a></td>
 							<td>${row.title}</td>
 						</tr>
 					</c:forEach>
