@@ -82,7 +82,7 @@ table.dataTable thead .sorting_asc {
 					from n3c_pubs.manuscript
 					where not exists (select ms_id from n3c_pubs.match where manuscript.ms_id=match.ms_id)
 					  and exists (select doi from covid_biorxiv.author
-					  			  where author.name ~ corresponding_author_last_name
+					  			  where author.name ~ ('(^|[^a-zA-Z])'||corresponding_author_last_name||'($|[^a-zA-Z])')
 					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = author.doi)
 					  			    and not exists (select * from n3c_pubs.match where match.doi = author.doi)
 					  			  union
@@ -146,7 +146,7 @@ table.dataTable thead .sorting_asc {
 					from covid_biorxiv.document natural join covid_biorxiv.author
 					where not exists (select doi from n3c_pubs.suppress where suppress.doi=document.doi)
 					  and not exists (select doi from n3c_pubs.match where match.doi=document.doi)
-					  and name ~ ?
+					  and name ~ ('(^|[^a-zA-Z])'||?||'($|[^a-zA-Z])')
 					order by name;
 					<sql:param>${param.author}</sql:param>
 				</sql:query>
