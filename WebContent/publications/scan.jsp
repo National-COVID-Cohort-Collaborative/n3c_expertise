@@ -59,7 +59,7 @@ table.dataTable thead .sorting_asc {
 				</table>
 
 				<sql:query var="names" dataSource="jdbc/N3CExpertiseTagLib">
-					select ms_id,tentative_manuscript_or_publication_title,corresponding_author_name,doi,title from n3c_pubs.manuscript natural join n3c_pubs.match natural join covid_biorxiv.document;
+					select ms_id,tentative_manuscript_or_publication_title,corresponding_author_name,doi,title from n3c_pubs.manuscript natural join n3c_pubs.match natural join covid_biorxiv.biorxiv_current order by doi;
 				</sql:query>
 
 				<h3>medRxiv/bioRxiv Preprints</h3>
@@ -81,10 +81,10 @@ table.dataTable thead .sorting_asc {
 						count(*)
 					from n3c_pubs.manuscript
 					where not exists (select ms_id from n3c_pubs.match where manuscript.ms_id=match.ms_id)
-					  and exists (select doi from covid_biorxiv.author
-					  			  where author.name ~ ('(^|[^a-zA-Z])'||corresponding_author_last_name||'($|[^a-zA-Z])')
-					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = author.doi)
-					  			    and not exists (select * from n3c_pubs.match where match.doi = author.doi)
+					  and exists (select doi from covid_biorxiv.biorxiv_current_author
+					  			  where biorxiv_current_author.name ~ ('(^|[^a-zA-Z])'||corresponding_author_last_name||'($|[^a-zA-Z])')
+					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = biorxiv_current_author.doi)
+					  			    and not exists (select * from n3c_pubs.match where match.doi = biorxiv_current_author.doi)
 					  			  union
 					  			  select pmid::text from covid_litcovid.author
 					  			  where author.last_name = corresponding_author_last_name
@@ -141,11 +141,11 @@ table.dataTable thead .sorting_asc {
 					select
 						doi,
 						title,
-						seqnum,
+						rank,
 						name
-					from covid_biorxiv.document natural join covid_biorxiv.author
-					where not exists (select doi from n3c_pubs.suppress where suppress.doi=document.doi)
-					  and not exists (select doi from n3c_pubs.match where match.doi=document.doi)
+					from covid_biorxiv.biorxiv_current natural join covid_biorxiv.biorxiv_current_author
+					where not exists (select doi from n3c_pubs.suppress where suppress.doi=biorxiv_current.doi)
+					  and not exists (select doi from n3c_pubs.match where match.doi=biorxiv_current.doi)
 					  and name ~ ('(^|[^a-zA-Z])'||?||'($|[^a-zA-Z])')
 					order by name;
 					<sql:param>${param.author}</sql:param>
