@@ -77,21 +77,22 @@ table.dataTable thead .sorting_asc {
 				</table>
 
 				<sql:query var="names" dataSource="jdbc/N3CExpertiseTagLib">
-					select corresponding_author_last_name as author,
+					select corresponding_author_last_name as author,substring(corresponding_author_name from 1 for 1) as initial,
 						count(*)
 					from n3c_pubs.manuscript
 					where not exists (select ms_id from n3c_pubs.match where manuscript.ms_id=match.ms_id)
 					  and exists (select doi from covid_biorxiv.biorxiv_current_author
-					  			  where biorxiv_current_author.name ~ ('(^|[^a-zA-Z])'||corresponding_author_last_name||'($|[^a-zA-Z])')
+					  			  where biorxiv_current_author.name ~ ('^'||substring(corresponding_author_name from 1 for 1)||'.*[^a-zA-Z]+'||corresponding_author_last_name||'($|[^a-zA-Z])')
 					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = biorxiv_current_author.doi)
 					  			    and not exists (select * from n3c_pubs.match where match.doi = biorxiv_current_author.doi)
 					  			  union
 					  			  select pmid::text from covid_litcovid.author
 					  			  where author.last_name = corresponding_author_last_name
+					  			    and author.fore_name ~ ('^'||substring(corresponding_author_name from 1 for 1))
 					  			    and not exists (select * from n3c_pubs.suppress where suppress.pmid = author.pmid)
 					  			    and not exists (select * from n3c_pubs.match where match.pmid = author.pmid)
 					  			  )
-					group by 1
+					group by 1,2
 					order by 1
 					;
 				</sql:query>
@@ -101,7 +102,7 @@ table.dataTable thead .sorting_asc {
 					<tr><th>Corresponding Author</th><th>Count</th></tr>
 					<c:forEach items="${names.rows}" var="row" varStatus="rowCounter">
 						<tr>
-							<td><a href="scan.jsp?author=${row.author}">${row.author}</a></td>
+							<td><a href="scan.jsp?author=${row.author}&initial=${row.initial}">${row.author}</a></td>
 							<td>${row.count}</td>
 						</tr>
 					</c:forEach>
@@ -146,8 +147,9 @@ table.dataTable thead .sorting_asc {
 					from covid_biorxiv.biorxiv_current natural join covid_biorxiv.biorxiv_current_author
 					where not exists (select doi from n3c_pubs.suppress where suppress.doi=biorxiv_current.doi)
 					  and not exists (select doi from n3c_pubs.match where match.doi=biorxiv_current.doi)
-					  and name ~ ('(^|[^a-zA-Z])'||?||'($|[^a-zA-Z])')
+					  and name ~ ('^'||?||'.*[^a-zA-Z]+'||?||'($|[^a-zA-Z])')
 					order by name;
+					<sql:param>${param.initial}</sql:param>
 					<sql:param>${param.author}</sql:param>
 				</sql:query>
 
@@ -157,7 +159,7 @@ table.dataTable thead .sorting_asc {
 					<c:forEach items="${names.rows}" var="row" varStatus="rowCounter">
 						<tr>
 							<td><input type="radio" id="preprint_choice" name="preprint_choice" value="${row.doi}"></td>
-							<td><a href="submit_suppress.jsp?author=${param.author}&doi=${row.doi}">suppress</a></td>
+							<td><a href="submit_suppress.jsp?author=${param.author}&initial=${param.initial}&doi=${row.doi}">suppress</a></td>
 							<td><a href="https://doi.org/${row.doi}">${row.doi}</a></td>
 							<td>${row.title}</td>
 							<td>${row.seqnum}</td>
@@ -178,8 +180,10 @@ table.dataTable thead .sorting_asc {
 					  and not exists (select pmid from n3c_pubs.suppress where suppress.pmid=article_title.pmid)
 					  and not exists (select pmid from n3c_pubs.match where match.pmid=article_title.pmid)
 					  and author.last_name = ?
+					  and author.fore_name ~ ('^'||?)
 					order by last_name,fore_name, article_title;
 					<sql:param>${param.author}</sql:param>
+					<sql:param>${param.initial}</sql:param>
 				</sql:query>
 
 				<h3>NIH LitCOVID Publications</h3>
@@ -188,7 +192,7 @@ table.dataTable thead .sorting_asc {
 					<c:forEach items="${names.rows}" var="row" varStatus="rowCounter">
 						<tr>
 							<td><input type="radio" id="litcovid_choice" name="litcovid_choice" value="${row.pmid}"></td>
-							<td><a href="submit_suppress.jsp?author=${param.author}&pmid=${row.pmid}">suppress</a></td>
+							<td><a href="submit_suppress.jsp?author=${param.author}&initial=${param.initial}&pmid=${row.pmid}">suppress</a></td>
 							<td><a href="https://pubmed.ncbi.nlm.nih.gov/${row.pmid}">${row.pmid}</a></td>
 							<td>${row.article_title}</td>
 							<td>${row.seqnum}</td>

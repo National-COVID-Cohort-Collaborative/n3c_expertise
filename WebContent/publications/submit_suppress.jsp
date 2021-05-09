@@ -10,4 +10,5 @@
 
 <c:redirect url="scan.jsp">
 <c:param name="author">${param.author}</c:param>
+<c:param name="initial">${param.initial}</c:param>
 </c:redirect>
