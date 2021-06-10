@@ -85,10 +85,12 @@ table.dataTable thead .sorting_asc {
 					from (select manuscript.*,substring(first_name from 1 for 1) as initial,last_name
 						  from n3c_pubs.manuscript,n3c_admin.registration
 						  where lower(correspondingauthor_email) = lower(email)
+						    and manuscript.type='Manuscript'
 						  union
 						  select *,substring(correspondingauthor from 1 for 1) as initial,substring(correspondingauthor from '[A-Za-z]+$') as last_name
 						  from n3c_pubs.manuscript
 						  where lower(correspondingauthor_email) not in (select lower(email) from n3c_admin.registration)
+						    and manuscript.type='Manuscript'
 						  ) as manuscript
 					where not exists (select ms_id from n3c_pubs.match where manuscript.ms_id=match.ms_id)
 					  and exists (select doi from covid_biorxiv.biorxiv_current_author
