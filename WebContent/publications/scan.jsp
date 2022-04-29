@@ -82,27 +82,19 @@ table.dataTable thead .sorting_asc {
 
 				<sql:query var="names" dataSource="jdbc/N3CExpertiseTagLib">
 					select last_name, initial, count(*)
-					from (select manuscript.*,substring(first_name from 1 for 1) as initial,last_name
-						  from n3c_pubs.manuscript,n3c_admin.registration
-						  where lower(correspondingauthor_email) = lower(email)
-						    and manuscript.type='Manuscript'
-						  union
-						  select *,substring(correspondingauthor from 1 for 1) as initial,substring(correspondingauthor from '[A-Za-z]+$') as last_name
-						  from n3c_pubs.manuscript
-						  where lower(correspondingauthor_email) not in (select lower(email) from n3c_admin.registration)
-						    and manuscript.type='Manuscript'
-						  ) as manuscript
-					where not exists (select ms_id from n3c_pubs.match where manuscript.ms_id=match.ms_id)
-					  and exists (select doi from covid_biorxiv.biorxiv_current_author
-					  			  where biorxiv_current_author.name ~ ('^'||manuscript.initial||'.*[^a-zA-Z]+'||manuscript.last_name||'($|[^a-zA-Z])')
-					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = biorxiv_current_author.doi)
-					  			    and not exists (select * from n3c_pubs.match where match.doi = biorxiv_current_author.doi)
+					from n3c_pubs.ms_candidate
+					where not exists (select ms_id from n3c_pubs.match where ms_candidate.ms_id=match.ms_id)
+					  and exists (select doi from n3c_pubs.bio_candidate
+					  			  where bio_candidate.last_name = ms_candidate.last_name
+					  			    and bio_candidate.initial = ms_candidate.initial
+					  			    and not exists (select * from n3c_pubs.suppress where suppress.doi = bio_candidate.doi)
+					  			    and not exists (select * from n3c_pubs.match where match.doi = bio_candidate.doi)
 					  			  union
-					  			  select pmid::text from covid_litcovid.author
-					  			  where author.last_name = manuscript.last_name
-					  			    and author.fore_name ~ ('^'||manuscript.initial)
-					  			    and not exists (select * from n3c_pubs.suppress where suppress.pmid = author.pmid)
-					  			    and not exists (select * from n3c_pubs.match where match.pmid = author.pmid)
+					  			  select pmid::text from n3c_pubs.lit_candidate
+					  			  where lit_candidate.last_name = ms_candidate.last_name
+					  			    and lit_candidate.initial = ms_candidate.initial
+					  			    and not exists (select * from n3c_pubs.suppress where suppress.pmid = lit_candidate.pmid)
+					  			    and not exists (select * from n3c_pubs.match where match.pmid = lit_candidate.pmid)
 					  			  )
 					group by 1,2
 					order by 1,2
